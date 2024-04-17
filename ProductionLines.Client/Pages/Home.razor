@@ -1,0 +1,71 @@
+﻿@page "/"
+
+@if(productionLines is not null)
+{
+    @if (productionLines.Count == 0)
+    {
+        <RadzenText>No hay datos para mostrar</RadzenText>
+    }
+    else
+    {
+        <RadzenStack AlignItems="AlignItems.Center">
+            <RadzenText>Lineas de Produccion</RadzenText>
+        </RadzenStack>
+       
+        @foreach (var productionLine in productionFamilies)
+        {
+            <RadzenCard class="rz-mt-2" >
+                <RadzenStack>
+                    <RadzenRow AlignItems="AlignItems.Center">
+                        <RadzenColumn  SizeXS="6" OffsetXS="3" SizeSM="6" OffsetSM="3" SizeMD="3"  OffsetMD="0"  SizeLG="3"  OffsetLG="0">
+                            <RadzenCard>
+                                <RadzenStack AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+                                    @{
+                                        string quantityProduced ="Cantidad a producir: "+ productionLine.TankQuantityProduced.ToString();
+                                    }
+                                    <RadzenImage Path="@productionLine.MixingTankIcon" Style="width: 5rem;" AlternateText="Tank" />
+                                    <RadzenText class="text-info">@quantityProduced</RadzenText>
+                                </RadzenStack>
+                            </RadzenCard>
+                        </RadzenColumn>
+                        <RadzenColumn SizeXS="12" SizeSM="12" SizeMD="9" SizeLG="9">
+                            <RadzenRow AlignItems="AlignItems.Center">
+                                <RadzenColumn SizeXS="6" OffsetXS="3" SizeSM="4" OffsetSM="0" SizeMD="4" OffsetMD="0" SizeLG="4" OffsetLG="0" @onclick="@(()=>ShowOrdersPerProductionLine(productionLine))">
+                                    <RadzenCard Variant="@variant">
+                                        <RadzenStack AlignItems="AlignItems.Center">
+                                            @if (!string.IsNullOrEmpty(productionLine.Description))
+                                            {
+                                                string totalItems = productionLine.ItemsQuantity.ToString() + " Items en total";
+                                                <RadzenText TextStyle="TextStyle.Subtitle1" class="rz-mt-2">@productionLine.Description</RadzenText>
+                                                <RadzenStack Orientation="Orientation.Horizontal" Wrap="FlexWrap.Wrap" JustifyContent="JustifyContent.Center">
+                                                    <RadzenBadge IsPill="true" BadgeStyle="BadgeStyle.Light" class="rz-p-5" Text="@totalItems" />
+                                                </RadzenStack>
+                                            }
+                                        </RadzenStack>
+                                    </RadzenCard>
+                                </RadzenColumn>
+                                <RadzenColumn SizeXS="8" OffsetXS="2" SizeSM="8" OffsetSM="0" SizeMD="8" OffsetMD="0" SizeLG="8" OffsetLG="0">
+                                    <RadzenRow>
+                                        @foreach (var routeLine in productionLine.RoutingLines ?? new List<RoutingLineDto>())
+                                        {
+                                            <RadzenColumn SizeXS="6" SizeSM="6" SizeMD="4" SizeLG="3">
+                                                <RadzenCard @onclick="@(()=>ShowRoutingLines(routeLine))">
+                                                    <RadzenImage Path="@routeLine.Icon" Style="width: 5rem;" AlternateText="Production process" />
+                                                    <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-mt-2">@routeLine.Description</RadzenText>
+                                                </RadzenCard>
+                                            </RadzenColumn>
+                                        }
+                                    </RadzenRow>
+                                </RadzenColumn>
+                            </RadzenRow>
+                        </RadzenColumn>
+                    </RadzenRow>
+                </RadzenStack>
+            </RadzenCard>
+        }
+    }     
+}
+else
+{
+    <div class="spinner"></div>
+}

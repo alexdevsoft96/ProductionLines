@@ -1,0 +1,42 @@
+﻿* {
+    margin: 0;
+    padding: 0;
+}
+
+.spinner {
+    border: 16px solid silver;
+    border-top: 16px solid #337AB7;
+    border-radius: 50%;
+    width: 80px;
+    height: 80px;
+    animation: spin 700ms linear infinite;
+   /* top: 40%;*/
+    left: 45%;
+    position: absolute;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg)
+    }
+
+    100% {
+        transform: rotate(360deg)
+    }
+}
+.blazored-modal {
+    max-width: 40% !important;
+
+    @media(max-width:1200px) {
+        max-width: 60% !important;
+    }
+
+    @media(max-width:768px) {
+        max-width: 80% !important;
+    }
+}
+.text-info {
+    padding: 1.25rem;
+    text-transform: uppercase;
+    color: #60676c !important;
+}

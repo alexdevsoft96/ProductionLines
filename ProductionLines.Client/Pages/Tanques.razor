@@ -1,0 +1,39 @@
+﻿@page "/tanques"
+<h3>Tanques</h3>
+
+<RadzenCard Variant="@variant" Class="rz-my-12 rz-mx-auto" Style="max-width: 420px">
+    <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Start" Gap="1rem" Class="rz-p-4">
+
+        <RadzenCard Variant="@variant" Class="rz-my-12 rz-mx-auto" Style="max-width: 420px">
+            <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Start" Gap="1rem" Class="rz-p-4">
+
+                <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-2 rz-my-0">Card 1</RadzenText>
+                <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-2 rz-my-0">Card 2</RadzenText>
+            </RadzenStack>
+        </RadzenCard>
+
+        <RadzenCard Variant="@variant" Class="rz-my-12 rz-mx-auto" Style="max-width: 420px">
+            <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Start" Gap="1rem" Class="rz-p-4">
+                <p>
+                    <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-2 rz-my-0">Card 1</RadzenText>
+                </p>
+                <p>
+                    <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-2 rz-my-0">Card 1</RadzenText>
+                </p>
+                <p>
+                    <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-2 rz-my-0">Card 1</RadzenText>
+                </p>
+                <p>
+                    <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-2 rz-my-0">Card 1</RadzenText>
+                </p>
+                
+                
+            </RadzenStack>
+        </RadzenCard>
+
+    </RadzenStack>
+</RadzenCard>
+
+@code {
+    Variant variant = Variant.Filled;
+}

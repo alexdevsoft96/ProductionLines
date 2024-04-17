@@ -1,0 +1,89 @@
+﻿@using BCService;
+@using Microsoft.OData.Client;
+@inject IBCData _bcData;
+@inject DialogService DialogService
+
+<div class="rz-mb-5 rz-text-align-right">
+    <RadzenLabel Text="Select Date" Component="RadzenDatePickerChangeEvent" Style="margin-right: 8px; vertical-align: middle;" />
+    <RadzenDatePicker TValue="DateTime?" @bind-Value=@productionDate Change="@UpdateProductionOrdersPerProducionLine" Name="RadzenDatePickerChangeEvent" />
+</div>
+
+<RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" @ref="grid" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+                Data="@releasedProductionOrderLines" TItem="ReleasedProductionOrderProdOrderLines" ColumnWidth="300px"
+                AllowSorting="true" LogicalFilterOperator="LogicalFilterOperator.Or" SelectionMode="DataGridSelectionMode.Single"
+                @bind-Value=@selectedReleasedProductionLineOrder RowClick="@((args) => SelectProductionOrderLine(args))">
+    <Columns>
+        <RadzenDataGridColumn TItem="ReleasedProductionOrderProdOrderLines" Property="Description" Title="Description" Width="300px" />
+        <RadzenDataGridColumn TItem="ReleasedProductionOrderProdOrderLines" Property="Starting_Date" Title="Date" Width="160px" />
+        <RadzenDataGridColumn TItem="ReleasedProductionOrderProdOrderLines" Property="Quantity" Title="Quantity" Width="200px" />
+        <RadzenDataGridColumn TItem="ReleasedProductionOrderProdOrderLines" Property="Finished_Quantity" Title="Finished Quantity" Width="200px" />
+        <RadzenDataGridColumn TItem="ReleasedProductionOrderProdOrderLines" Property="Remaining_Quantity" Title="Remaining Quantity" Width="200px" />
+        <RadzenDataGridColumn TItem="ReleasedProductionOrderProdOrderLines" Property="Unit_Cost" Title="Unit Cost" Width="200px" />
+        <RadzenDataGridColumn TItem="ReleasedProductionOrderProdOrderLines" Property="Cost_Amount" Title="Cost Amount" Width="200px" />
+    </Columns>
+</RadzenDataGrid>
+
+@code {
+
+    [CascadingParameter] BlazoredModalInstance? BlazoredModal { get; set; }
+    [Parameter] public ProductionFamilyDto? SelectedProductionLine { get; set; }
+
+    private List<ReleasedProductionOrderProdOrderLines> releasedProductionOrderLines = new List<ReleasedProductionOrderProdOrderLines>();
+    RadzenDataGrid<ReleasedProductionOrderProdOrderLines>? grid;
+
+    DateTime? productionDate = DateTime.Now.Date;
+
+    IList<ReleasedProductionOrderProdOrderLines>? selectedReleasedProductionLineOrder;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetReleasedProductionOrders();
+    }
+
+    private async Task GetReleasedProductionOrders()
+    {
+        if (SelectedProductionLine is not null)
+        {
+            List<ReleasedProductionOrder> currentReleasedProductionOrders = await _bcData.GetReleasedProductionOrdersPerProductionLineAndDate(SelectedProductionLine.No!, productionDate!.Value);
+
+            foreach (var releaseOrder in currentReleasedProductionOrders)
+            {
+                releasedProductionOrderLines.AddRange(releaseOrder.ReleasedProductionOrderProdOrderLines);
+            }
+            selectedReleasedProductionLineOrder = new List<ReleasedProductionOrderProdOrderLines> { releasedProductionOrderLines.FirstOrDefault()! };
+            await grid!.RefreshDataAsync();
+        }
+    }
+
+    protected async void SelectProductionOrderLine(DataGridRowMouseEventArgs<ReleasedProductionOrderProdOrderLines> args)
+    {
+        ReleasedProductionOrderProdOrderLines releasedProductionOrder = args.Data;
+        List<ProductionBomProdBOMLine> productionBomOfCurrentItem = await _bcData.GetProductionBomByProduct(releasedProductionOrder.Production_BOM_No);
+        await ShowProductionBowDialog(productionBomOfCurrentItem, releasedProductionOrder.Description);
+        //production_BOM_No
+    }
+    private async Task ShowProductionBowDialog(List<ProductionBomProdBOMLine> productionBomOfCurrentItem, string ItemDescription)
+    {
+        var result = await DialogService.OpenAsync("Lista de Materiales", ds =>
+        @<RadzenStack Gap="0.5rem">
+            <RadzenText>@ItemDescription</RadzenText>
+            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">
+                <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+                                Data="@productionBomOfCurrentItem" TItem="ProductionBomProdBOMLine" ColumnWidth="300px"
+                                AllowSorting="true" LogicalFilterOperator="LogicalFilterOperator.Or">
+                    <Columns>
+                        <RadzenDataGridColumn TItem="ProductionBomProdBOMLine" Property="Description" Title="Description" Width="200px" />
+                        <RadzenDataGridColumn TItem="ProductionBomProdBOMLine" Property="Quantity_per" Title="Cantidad" Width="160px" />
+                    </Columns>
+                </RadzenDataGrid>
+            </RadzenStack>
+        </RadzenStack>);
+    }
+    private async Task UpdateProductionOrdersPerProducionLine()
+    {
+        releasedProductionOrderLines.Clear();
+        await GetReleasedProductionOrders();
+        await grid!.RefreshDataAsync();
+    }
+
+}

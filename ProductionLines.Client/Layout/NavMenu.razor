@@ -1,0 +1,18 @@
+﻿@inject NavigationManager navigation
+
+<RadzenPanelMenu>
+    <RadzenPanelMenuItem Text="Home" Icon="dashboard" Click="@GoHomePage" />
+    <RadzenPanelMenuItem Text="Data" Icon="dashboard" Click="@GoTanquesPage" />
+</RadzenPanelMenu>
+
+@code {
+    public void GoHomePage()
+    {
+        navigation.NavigateTo("/");
+    }
+    public void GoTanquesPage()
+    {
+        navigation.NavigateTo("/tanques");
+    }
+  
+}
