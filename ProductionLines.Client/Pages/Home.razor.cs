@@ -55,6 +55,8 @@ public partial class Home
                     routingLine.Description = routeLine.Description;
                     routingLine.SetupTime = routeLine.Setup_Time;
                     routingLine.RunTime = routeLine.Run_Time;
+                    routingLine.FixedScrapQuantity= routeLine.Fixed_Scrap_Quantity;
+                    routingLine.ScrapFactorPercentaje = routeLine.Scrap_Factor_Percent;
                     routingLine.Icon = pathIcon;
                     routesLines.Add(routingLine);
                 }
